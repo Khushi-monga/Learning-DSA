@@ -118,19 +118,232 @@ Node* middleOfList(Node* &head){
 }
 
 
+//2. Reverse a linked list 
+//LINK: https://leetcode.com/problems/reverse-linked-list/?utm=codolio
+
+//Iterative approach
+
+Node* reverseList(Node* &head){
+    Node* temp = head;
+    Node* before = nullptr;
+
+    while(temp != NULL){
+        Node* after = temp -> next; //store the next before changing next
+        temp -> next = before; //point the next to the prev node
+        before = temp; // move the prev node to temp 
+        temp = after; // move temp forward using the stored next
+    }
+
+    return before;
+}
+
+//Recursive approach 
+
+Node* revList(Node* &head){
+    //base case
+    if(head == NULL|| head -> next == NULL) return head;
+
+    //breakdown the ll and go till the last element then come back reversing one by one
+    Node* newHead = reverseList(head -> next);
+
+    Node* front = head -> next;
+    front -> next = head;
+    head -> next = NULL;
+
+    return newHead;
+}
+
+
+//3. Detect a loop in LL
+//LINK : https://leetcode.com/problems/linked-list-cycle/description/?utm=codolio
+
+//brute force - hashmaps
+bool detectLoop(Node* &head){
+    unordered_map<Node*, int> track;
+    Node* temp = head;
+
+    while(temp != NULL){
+        if(track.find(temp) != track.end()) return true;
+        track[temp] = 1;
+        temp = temp -> next;
+    }
+
+    return false;
+}
+
+
+// tortoise and hare || Floyd's cycle detection
+//[Proof is important (available in notes)]
+bool isLoop(Node* &head){
+    Node* slow = head;
+    Node* fast = head;
+
+    while(fast != NULL && fast -> next != NULL){
+        
+        slow = slow -> next;
+        fast = fast -> next -> next;
+        if(slow == fast) return true;
+        
+    }
+
+    return false;
+}
+
+//4. Find the starting point of the loop 
+//LINK: https://leetcode.com/problems/linked-list-cycle-ii/?utm=codolio
+
+//brute force
+Node* startOfLoop(Node* &head){
+    Node* temp = head;
+    unordered_map<Node*, int> track;
+
+    while(temp != NULL){
+        if(track.find(temp) != track.end()) return temp;
+
+        track[temp] = 1;
+        temp = temp -> next;
+    }
+
+    return NULL;
+}
+
+//Tortoise and hare
+//Look at proof(available in notes)
+Node* loopStartNode(Node* &head){
+    Node* slow = head;
+    Node* fast = head;
+
+    while(fast != NULL && fast -> next != NULL){
+        slow = slow -> next;
+        fast = fast -> next -> next;
+        if(slow == fast){
+            //loop confirmed now detecting the start point 
+            slow = head;
+            while(slow != fast){
+                slow = slow -> next;
+                fast = fast -> next;
+            }
+            return slow;
+        }
+    }
+
+    return NULL;
+}
+
+
+//5. Length of loop
+//Brute force 
+int lenOfLoop(Node* &head){
+    Node* temp = head;
+    unordered_map<Node*, int> track;
+    int count = 1, ans = 0;
+
+    while(temp != NULL){
+        if(track.find(temp) != track.end()) {
+            cout << "count : " << count<< endl;
+            cout << "start point: " << track[temp] << endl;
+            ans =  count - track[temp] ;
+            return ans;
+        }
+        track[temp] = count++;
+        cout << temp -> data << ": " << track[temp]<< endl; // was verifying count would be extra because we counted till temp became null
+        temp = temp -> next;
+    }
+
+    return ans;
+}
+
+//tortoise and hare
+int loopLength(Node* &head){
+    Node* slow = head;
+    Node* fast = head;
+    int ans = 0;
+
+    while(fast != NULL && fast -> next != NULL){
+        slow = slow -> next;
+        fast = fast -> next -> next;
+        //detect the loop
+        if(fast == slow){
+            // now find length by moving fast forward with step 1 and reaching back slow
+            fast = fast -> next;
+            ans++;
+            
+            while(fast != slow){
+                fast = fast -> next;
+                ans++;
+            }
+
+            return ans;
+        }
+    }
+
+    return ans;
+}
+
+
+
 int main(){
 
     cout << endl; 
-
-    //testing Q1 
     vector<int> sample = {1,2,3,4,5,6,7,8,9,10};
     Node* Head = convertArr2LL(sample);
-    cout << lengthOfLL(Head) << endl;
-    Node* mid = midOfList(Head);
-    printLL(mid);
 
-    mid = middleOfList(Head);
-    printLL(mid);
+    // //testing Q1 
+    // cout << lengthOfLL(Head) << endl;
+    // Node* mid = midOfList(Head);
+    // printLL(mid);
+
+    // mid = middleOfList(Head);
+    // printLL(mid);
+
+    // //Testing Q2
+    // Head = reverseList(Head);
+    // printLL(Head);
+
+    // Head = revList(Head);
+    // printLL(Head);
+
+
+    // //Testing Q3
+    // bool ans = detectLoop(Head);
+    // cout << "Loop in given LL : " << ans << endl;
+
+    // ans = isLoop(Head);
+    // cout << "Loop in given LL : " << ans << endl;
+
+    //adding loop in list
+    Node* temp = Head;
+    Node* toPoint = NULL;
+    int count = 1;
+    while(temp -> next != NULL){
+        temp = temp -> next;
+        count++;
+        if(count == 3) toPoint = temp;
+    } 
+
+    temp -> next = toPoint;
+
+    // //testing again
+    // ans = detectLoop(Head);
+    // cout << "Loop in given LL : " << ans << endl;
+
+    // ans = isLoop(Head);
+    // cout << "Loop in given LL : " << ans << endl;
+
+    // //Testing Q4
+    // Node* startPt = startOfLoop(Head);
+    // cout << "starting point of node : " << startPt -> data << endl;
+
+    // startPt = loopStartNode(Head);
+    // cout << "starting point of node : " << startPt -> data << endl;
+
+    //Testing Q5
+    int length = lenOfLoop(Head);
+    cout << "length of loop : " << length << endl;
+
+    length = loopLength(Head);
+    cout << "length of loop : " << length << endl;
+
 
     return 0;
 }
