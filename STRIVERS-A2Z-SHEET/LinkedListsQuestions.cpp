@@ -327,12 +327,126 @@ bool isPalindrome(Node* &head){
 
 //7. Odd-Even linked list
 //LINK : https://leetcode.com/problems/odd-even-linked-list/?utm=codolio
+Node*  oddEvenList(Node* &head){
+    if(head == NULL || head -> next == NULL) return head;
+    Node* firstEven = head -> next;
+    Node* temp = head;
+    Node* after = NULL;
+    int count = 1;
+
+    while(temp != NULL){
+
+        after = temp -> next;
+        if((temp -> next == NULL || temp -> next -> next == NULL) && count%2 != 0){
+            temp -> next = firstEven;
+        }
+
+        else if(temp -> next == NULL && count%2 == 0) break;
+
+        else temp -> next = temp -> next -> next;
+        
+        temp = after;
+        count++;
+    }
+
+    return head;
+}
 
 //8. delete nth node from end
 //LINK : https://leetcode.com/problems/remove-nth-node-from-end-of-list/submissions/1938500907/?utm=codolio
+//Brute force
+//find length
+//move till length - n -1 and delete
+Node* deleteNthFromEnd(Node* &head, int n){
+    if(head == NULL || head -> next == NULL) return NULL;
+    
+    Node* temp = head;
+    int len = 0;
+
+    while(temp != NULL){
+        temp = temp -> next;
+        len++;
+    }
+
+    temp = head;
+    //In case n points to head
+    if(n == len){
+        head = head -> next;
+        temp -> next = NULL;
+        delete temp;
+        return head;
+    }
+
+    for(int i = 1; i<len-n; i++) temp = temp -> next;
+
+    Node* toDel = temp -> next;
+    temp -> next = temp -> next -> next;
+    toDel -> next = NULL;
+    delete toDel;
+
+    return head;
+}
+
+//Optimized approach 
+//put fast n nodes ahead of slow
+//then move them at same pace till fast reaches end;
+
+Node* delNthfromEnd(Node* &head, int n){
+    if(head == NULL || head -> next == NULL) return NULL;
+
+    Node* slow = head;
+    Node* fast = head -> next -> next;
+    Node* temp = NULL;
+
+    for(int i = 1; i<n; i++) fast = fast -> next;
+
+    if(fast == NULL){
+        head = head -> next;
+        slow -> next = NULL;
+        delete slow;
+        return head;
+    }
+
+    while(fast != NULL && fast -> next != NULL){
+        slow = slow -> next;
+        fast = fast -> next;
+    }
+
+    temp = slow -> next;
+    slow -> next = slow -> next -> next;
+    temp -> next = NULL;
+    delete temp;
+
+    return head;
+}
+
 
 //9. Delete middle node 
-//LINK: https://leetcode.com/problems/remove-nth-node-from-end-of-list/submissions/1938500907/?utm=codolio
+//LINK: https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/?utm=codolio
+Node* delMid(Node* &head){
+    if(head-> next == NULL) return NULL;
+        if(head -> next -> next == NULL){
+            Node* temp = head -> next;
+            head -> next = NULL;
+            delete temp;
+            return head;
+        }
+
+        Node* slow = head;
+        Node* fast = head;
+        Node* temp = NULL;
+
+        while(fast!= NULL && fast -> next != NULL){
+            temp = slow;
+            slow = slow -> next;
+            fast = fast -> next -> next;
+        }
+
+        temp -> next = slow -> next;
+        slow -> next = NULL;
+        delete slow;
+        return head;
+}
 
 //10. Merge two sorted lists
 
@@ -409,12 +523,28 @@ int main(){
     // length = loopLength(Head);
     // cout << "length of loop : " << length << endl;
 
-    //Trying Q6
+    // //Trying Q6
     vector<int> arr = {1,2,1};
     Node* head2 = convertArr2LL(arr);
-    bool ans = isPalindrome(head2);
-    cout << "Is the given LL palindrome : " << ans << endl;
+    // bool ans = isPalindrome(head2);
+    // cout << "Is the given LL palindrome : " << ans << endl;
 
+    // //Trying Q7
+    head2 = convertArr2LL(sample);
+    // head2 = oddEvenList(head2);
+    // printLL(head2);
+
+    //Q8
+    head2 = deleteNthFromEnd(head2, 2);
+    printLL(head2);
+    head2 = delNthfromEnd(head2, 3);
+    printLL(head2);
+
+    head2 = delMid(head2);
+    printLL(head2);
+
+    head2 = delMid(head2);
+    printLL(head2);
 
     return 0;
 }
