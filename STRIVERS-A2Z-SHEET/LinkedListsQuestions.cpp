@@ -280,6 +280,71 @@ int loopLength(Node* &head){
     return ans;
 }
 
+//5/02/2026
+//6. Checking whether an LL is palindrome or not
+//LINK : https://leetcode.com/problems/palindrome-linked-list/?utm=codolio
+bool isPalindrome(Node* &head){
+    if(head -> next == NULL) return true;
+
+    Node* slow = head;
+    Node* fast = head;
+    Node* before = NULL;
+    Node* after = NULL;
+
+    // Reverse the ll till mid
+    while(fast != NULL && fast -> next != NULL){
+        fast = fast -> next -> next;
+        after = slow -> next;
+        slow -> next = before;
+        before = slow;
+        slow = after;
+    }
+
+    if(fast!= NULL) slow = slow -> next;
+    fast = before;
+
+    while(fast != NULL && slow != NULL){
+        if(fast -> data != slow -> data) return false;
+        fast = fast -> next;
+        slow = slow -> next;
+    }
+
+    //Restoring the half reversed list
+    Node* temp = before;
+    before = after;
+
+
+    while(temp != NULL){
+        after = temp -> next;
+        temp -> next = before;
+        before = temp;
+        temp = after;
+    }
+
+    return true;
+}
+
+
+//7. Odd-Even linked list
+//LINK : https://leetcode.com/problems/odd-even-linked-list/?utm=codolio
+
+//8. delete nth node from end
+//LINK : https://leetcode.com/problems/remove-nth-node-from-end-of-list/submissions/1938500907/?utm=codolio
+
+//9. Delete middle node 
+//LINK: https://leetcode.com/problems/remove-nth-node-from-end-of-list/submissions/1938500907/?utm=codolio
+
+//10. Merge two sorted lists
+
+//11. Sort list
+//LINK : https://leetcode.com/problems/sort-list/submissions/1938752414/?utm=codolio
+
+
+//12. Intersection between two linked lists
+//LINK : https://leetcode.com/problems/intersection-of-two-linked-lists/submissions/1938781876/?utm=codolio
+
+
+
 
 
 int main(){
@@ -337,12 +402,18 @@ int main(){
     // startPt = loopStartNode(Head);
     // cout << "starting point of node : " << startPt -> data << endl;
 
-    //Testing Q5
-    int length = lenOfLoop(Head);
-    cout << "length of loop : " << length << endl;
+    // //Testing Q5
+    // int length = lenOfLoop(Head);
+    // cout << "length of loop : " << length << endl;
 
-    length = loopLength(Head);
-    cout << "length of loop : " << length << endl;
+    // length = loopLength(Head);
+    // cout << "length of loop : " << length << endl;
+
+    //Trying Q6
+    vector<int> arr = {1,2,1};
+    Node* head2 = convertArr2LL(arr);
+    bool ans = isPalindrome(head2);
+    cout << "Is the given LL palindrome : " << ans << endl;
 
 
     return 0;
