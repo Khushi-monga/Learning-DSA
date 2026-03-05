@@ -450,6 +450,7 @@ Node* delMid(Node* &head){
 
 //10. Merge two sorted lists
 
+
 //11. Sort list
 //LINK : https://leetcode.com/problems/sort-list/submissions/1938752414/?utm=codolio
 
@@ -534,17 +535,18 @@ int main(){
     // head2 = oddEvenList(head2);
     // printLL(head2);
 
-    //Q8
-    head2 = deleteNthFromEnd(head2, 2);
-    printLL(head2);
-    head2 = delNthfromEnd(head2, 3);
-    printLL(head2);
+    // //Q8
+    // head2 = deleteNthFromEnd(head2, 2);
+    // printLL(head2);
+    // head2 = delNthfromEnd(head2, 3);
+    // printLL(head2);
 
-    head2 = delMid(head2);
-    printLL(head2);
+    // //Q9
+    // head2 = delMid(head2);
+    // printLL(head2);
 
-    head2 = delMid(head2);
-    printLL(head2);
+    // head2 = delMid(head2);
+    // printLL(head2);
 
     return 0;
 }
