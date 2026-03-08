@@ -347,7 +347,7 @@ vector<vector<int>> findPairsWithGivenSum(Node* head, int target) {
             }
         }
 
-        
+
         while(fast != slow){
             int slowVal = slow -> data;
             int fastVal = fast -> data;
@@ -365,6 +365,47 @@ vector<vector<int>> findPairsWithGivenSum(Node* head, int target) {
         return ans;
     }
 
+    //Q3
+    //Remove duplicates from sorted DLL
+    //LINK: https://takeuforward.org/plus/dsa/problems/remove-duplicated-from-sorted-dll?utm=codolio
+    Node* removeDuplicates(Node* &head){
+        if(head == NULL || head -> next == NULL) return head;
+        Node* slow  = head;
+        Node* fast = head -> next;
+        Node* toDel = NULL;
+
+        while(fast != NULL){
+            int slowVal = slow -> data;
+            int fastVal = fast -> data;
+
+            if(slowVal == fastVal){
+                if(fast -> next == NULL){
+                    slow -> next = NULL;
+                    fast -> prev = NULL;
+                    toDel = fast;
+                    fast = fast -> next;
+                } 
+                else{
+                    toDel= fast;
+                    fast = fast -> next;
+                    slow -> next = fast;
+                    fast -> prev = slow;
+                    toDel -> next = NULL;
+                    toDel -> prev = NULL;
+                }
+                free(toDel);
+            }
+            
+            else{
+                slow = fast;
+                fast = fast -> next;
+            }
+
+        }
+
+        return head;
+    }
+
 
 int main(){
     cout << endl;
@@ -377,15 +418,19 @@ int main(){
     // printDll(head);
 
     //Q2
-    vector<int> sample1 = {1, 2, 3, 4};
+    vector<int> sample1 = {1,2,2};
     Node* head1 = ConvertArr2DLL(sample1);
-    vector<vector<int>> ans = findPairsWithGivenSum(head1, 10);
-    cout << "size of ans : " << ans.size() << endl;
-    for(int i = 0; i<ans.size(); i++){
-        for(int j = 0; j<2; j++){
-            cout << ans[i][j] << " ";
-        } cout << endl;
-    }
+    //vector<vector<int>> ans = findPairsWithGivenSum(head1, 10);
+    // cout << "size of ans : " << ans.size() << endl;
+    // for(int i = 0; i<ans.size(); i++){
+    //     for(int j = 0; j<2; j++){
+    //         cout << ans[i][j] << " ";
+    //     } cout << endl;
+    // }
+
+    //Q3
+    head1 = removeDuplicates(head1);
+    printDll(head1);
 
     return 0;
 }
