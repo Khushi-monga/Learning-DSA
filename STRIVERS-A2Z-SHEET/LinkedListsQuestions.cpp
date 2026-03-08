@@ -449,16 +449,151 @@ Node* delMid(Node* &head){
 }
 
 //10. Merge two sorted lists
+Node* mergeLists(Node* &head1, Node* &head2){
+    //create a dummy node to start a merged list
+    Node* dummy = new Node(-1);
+    Node* temp = dummy;
+    Node* first = head1;
+    Node* second = head2;
+
+    while(first!= NULL && second != NULL){
+        
+        if(first -> data <= second -> data ){
+            int data = first -> data;
+            Node* newNode = new Node(data);
+            temp -> next = newNode;
+            temp = newNode;
+            first = first -> next;
+        }
+        else if(first -> data > second -> data ){
+            int data = second -> data;
+            Node* newNode = new Node(data);
+            temp -> next = newNode;
+            temp = newNode;
+            second = second -> next;
+        }
+    }
+
+    if(first == NULL) temp -> next = second;
+    else temp -> next = first;
+
+    temp = dummy -> next;
+    dummy -> next = NULL;
+    delete dummy;
+
+    return temp;
+}
 
 
 //11. Sort list
 //LINK : https://leetcode.com/problems/sort-list/submissions/1938752414/?utm=codolio
+//Using merge sort
+Node* sortList(Node* &head){
+    //base case 
+    if(head == NULL || head -> next == NULL) return head;
+
+    //Divide the lst into two
+    Node* slow = head;
+    Node* fast = head;
+    Node* before = NULL;
+
+    while(fast != NULL && fast -> next != NULL){
+        fast = fast -> next -> next;
+        before = slow;
+        slow = slow -> next;
+    }
+
+    before -> next = NULL; // separating the two lists
+ 
+    Node* leftHalf = sortList(head);
+    Node* rightHalf = sortList(slow);
+
+    head = mergeLists(leftHalf, rightHalf);
+
+    return head;
+    
+}
 
 
 //12. Intersection between two linked lists
 //LINK : https://leetcode.com/problems/intersection-of-two-linked-lists/submissions/1938781876/?utm=codolio
+//Brute force
+//traverse one list and store nodes in hashmap
+//traverse another and check in hashmap
 
+Node* findIntersection(Node* &head1, Node* &head2){
+    Node* l1 = head1;
+    Node* l2 = head2;
+    unordered_map<Node*, int> track;
+    
+    Node* temp = head1;
+    while(temp != NULL){
+        track[temp] = 1;
+        temp = temp -> next;
+    }
 
+    temp = head2;
+    while(temp != NULL){
+        if(track.find(temp) != track.end()) return temp;
+        temp = temp -> next;
+    }
+
+    return NULL;
+}
+
+//Optimal approach 
+//Bring the longer list'd first pointer forward till the remaining lengths of both the lists are equal
+//then traverse them together
+//if same node => intersection
+//else not
+Node* getIntersection(Node* &head1, Node* head2){
+    Node* first = head1;
+    Node* second = head2;
+
+    while(first->next != NULL && second->next != NULL){
+        first = first -> next;
+        second = second -> next;
+    }
+
+    //getting the length difference
+    int diff = 0;
+    int longerList = 0;//0 - equal; 1 - first; 2 - second
+    
+    if(first -> next != NULL){
+        while(first->next != NULL){
+            diff++;
+            first = first -> next;
+        }
+        longerList = 1;
+    }
+
+    else if(second -> next != NULL){
+        while(second->next !=NULL){
+            diff++;
+            second = second -> next;
+        }
+        longerList = 2;
+    }
+
+    if(first != second) return NULL;
+    first = head1;
+    second = head2;
+
+    if(longerList == 1){
+        for(int i = 1; i<diff; i++) first = first -> next;
+    }
+    else if(longerList == 2){
+        for(int i = 1; i<diff; i++) second = second -> next;
+    }
+
+    while(first != NULL && second != NULL){
+        if(first == second) return first;
+        first = first -> next;
+        second = second -> next;
+    }
+
+    return NULL;
+}
 
 
 
@@ -547,6 +682,36 @@ int main(){
 
     // head2 = delMid(head2);
     // printLL(head2);
+
+    // //Trying Q10
+    // vector<int> sample1 = {1,5,7,19,20};
+    // vector<int> sample2 = {2,8,13,15,21};
+    // Node* head1 = convertArr2LL(sample1);
+    // head2 = convertArr2LL(sample2);
+
+    // Node* mergedHead = mergeLists(head1,head2);
+    // printLL(mergedHead);
+
+    //Trying Q11
+    vector<int> sample1 = {50,18,22,3,19,15,82,38};
+    Node* head1 = convertArr2LL(sample1);
+    // head1 = sortList(head1);
+    // printLL(head1);
+
+    //Q12
+    vector<int> sample2 = {12,32,18,92};
+    head2 = convertArr2LL(sample2);
+    Node* temp1=head1;
+    Node* temp2 = head2;
+    while(temp2 -> next != NULL) temp2 = temp2 -> next;
+    for(int i = 0; i<3; i++){
+        temp1 = temp1 -> next;
+    }
+
+    temp2 -> next = temp1;
+
+    Node* intersection = getIntersection(head1, head2);
+    cout << "Intersection node : " << intersection->data << endl;
 
     return 0;
 }
