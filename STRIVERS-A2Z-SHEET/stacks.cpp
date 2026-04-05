@@ -99,18 +99,28 @@ class Stack{
         this -> size = 0;
     }
 
-    void push(Node* &temp){
+    void push(int data){
+        Node* temp = new Node(data);
         temp -> next = top;
         top = temp;
         size++;
     }
 
-    Node* pop(){
+    int pop(){
+        //if empty stack
+        if(size == 0){
+            cout << "Stack Underflow" << endl;
+            return INT_MIN;
+        }
+
+        //else
         Node* temp = top;
         top = top -> next;
         temp -> next = NULL;
         size--;
-        return temp;
+        int popped = temp -> data;
+        delete temp;
+        return popped;
     }
 
     int peek(){
@@ -164,24 +174,10 @@ void printLL(Node* &head){
     // cout << "Total number of elements : " << st->count() << endl;
 
     //LLimplementation
-    Stack* st = new Stack();
-    vector<int> sample = {10,20,30,40,50,60,70};
-    Node* head = convertArr2LL(sample);
+    // Stack* st = new Stack();
 
-    printLL(head);
-
+    // st->push(10);
+    // st->print();
     
-    // Pushing the elements of the linked list one by one to the stack
-    Node* temp = head;
-    while(temp != NULL){
-        Node* after = temp -> next;
-        st->push(temp);
-        temp = after;
-    }
-
-    //printing the stack
-    st->print();
-    
-
     return 0;
  }
